@@ -20,8 +20,12 @@
   font-size: 0.875rem;
 }
 
-.mb-2 { margin-bottom: 0.5rem; }
-.mb-4 { margin-bottom: 1rem; }
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+.mb-4 {
+  margin-bottom: 1rem;
+}
 
 .snippet-card {
   background: rgba(13, 17, 23, 0.6);
@@ -50,7 +54,7 @@
 }
 
 .app-container {
-  max-width: 1200px;
+  max-width: 1600px;
   margin: 0 auto;
   padding: 2rem 1rem;
 }

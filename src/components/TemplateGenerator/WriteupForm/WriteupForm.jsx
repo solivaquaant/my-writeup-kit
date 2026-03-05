@@ -168,20 +168,68 @@ export function WriteupForm({ data, onChange }) {
             ✏️ Task answers
           </label>
           {data.sections.taskAnswers.enabled && (
-             <div className="ml-6 mt-2 flex items-center gap-2">
-               <label className="text-sm text-secondary">Number of questions:</label>
-               <input
-                 type="number"
-                 min="1"
-                 className="w-32"
-                 value={data.sections.taskAnswers.count || 1}
-                 onChange={(e) => {
-                   const val = parseInt(e.target.value) || 1;
-                   const newSections = { ...data.sections };
-                   newSections.taskAnswers.count = val;
-                   onChange({ ...data, sections: newSections });
-                 }}
-               />
+             <div className="ml-6 mt-2 flex flex-col gap-3">
+               <div className="flex items-center gap-2">
+                 <label className="text-sm text-secondary">Number of questions:</label>
+                 <input
+                   type="number"
+                   min="1"
+                   className="w-32"
+                   value={data.sections.taskAnswers.count || 1}
+                   onChange={(e) => {
+                     const val = Math.max(1, parseInt(e.target.value) || 1);
+                     const newSections = { ...data.sections };
+                     newSections.taskAnswers.count = val;
+                     
+                     let items = newSections.taskAnswers.items || [];
+                     if (items.length < val) {
+                       const newItems = Array.from({ length: val - items.length }, () => ({ q: '', a: '' }));
+                       items = [...items, ...newItems];
+                     } else {
+                       items = items.slice(0, val);
+                     }
+                     newSections.taskAnswers.items = items;
+                     
+                     onChange({ ...data, sections: newSections });
+                   }}
+                 />
+               </div>
+               
+               {Array.from({ length: data.sections.taskAnswers.count || 1 }).map((_, i) => {
+                 const item = data.sections.taskAnswers.items?.[i] || { q: '', a: '' };
+                 return (
+                   <div key={i} className="flex flex-col gap-2 pl-4 border-l-2 border-[var(--border-color)]">
+                     <label className="text-sm font-medium text-[var(--accent-color)] mt-1">Question {i + 1}:</label>
+                     <input
+                       type="text"
+                       placeholder={`Question ${i + 1}`}
+                       value={item.q}
+                       onChange={(e) => {
+                         const newSections = { ...data.sections };
+                         const newItems = [...(newSections.taskAnswers.items || [])];
+                         if (!newItems[i]) newItems[i] = { q: '', a: '' };
+                         newItems[i] = { ...newItems[i], q: e.target.value };
+                         newSections.taskAnswers.items = newItems;
+                         onChange({ ...data, sections: newSections });
+                       }}
+                     />
+                     <textarea
+                       placeholder={`Answer ${i + 1}`}
+                       rows={2}
+                       value={item.a}
+                       onChange={(e) => {
+                         const newSections = { ...data.sections };
+                         const newItems = [...(newSections.taskAnswers.items || [])];
+                         if (!newItems[i]) newItems[i] = { q: '', a: '' };
+                         newItems[i] = { ...newItems[i], a: e.target.value };
+                         newSections.taskAnswers.items = newItems;
+                         onChange({ ...data, sections: newSections });
+                       }}
+                       className="resize-none"
+                     />
+                   </div>
+                 );
+               })}
              </div>
           )}
         </div>

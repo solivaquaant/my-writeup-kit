@@ -30,7 +30,8 @@ export function TemplateGenerator() {
       },
       taskAnswers: { 
         enabled: false, 
-        count: 1 
+        count: 1,
+        items: [{ q: '', a: '' }]
       },
       flag: { 
         enabled: true, 
@@ -76,7 +77,7 @@ export function TemplateGenerator() {
     if (info.Scenario) 
       md += `- **Scenario:** ${info.Scenario}\n`;
     if (info.Link) 
-      md += `- **Link:** ${info.Link}\n`;
+      md += `- **Link:** [${writeupData.title || 'Title'}](${info.Link})\n`;
     md += `\n`;
 
     // Sections
@@ -96,10 +97,12 @@ export function TemplateGenerator() {
       md += `## ✏️ Task answers\n`;
 
       const count = writeupData.sections.taskAnswers.count || 1;
+      const items = writeupData.sections.taskAnswers.items || [];
       for (let i = 0; i < count; i++) {
-        md += `****\n> \n`;
+        const q = items[i]?.q || `Question ${i + 1}`;
+        const a = items[i]?.a || `Answer ${i + 1}`;
+        md += `**${q}**\n> ${a}\n\n`;
       }
-      md += `\n`;
     }
     
     if (writeupData.sections.flag.enabled) {
