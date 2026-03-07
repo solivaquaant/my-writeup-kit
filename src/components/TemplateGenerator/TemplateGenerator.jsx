@@ -31,6 +31,7 @@ export function TemplateGenerator() {
       taskAnswers: { 
         enabled: false, 
         count: 1,
+        prefix: 'Task',
         items: [{ q: '', a: '' }]
       },
       flag: { 
@@ -97,11 +98,13 @@ export function TemplateGenerator() {
       md += `## ✏️ Task answers\n`;
 
       const count = writeupData.sections.taskAnswers.count || 1;
+      const prefix = writeupData.sections.taskAnswers.prefix || 'Task';
       const items = writeupData.sections.taskAnswers.items || [];
       for (let i = 0; i < count; i++) {
-        const q = items[i]?.q || `Question ${i + 1}`;
-        const a = items[i]?.a || `Answer ${i + 1}`;
-        md += `**${q}**\n> ${a}\n\n`;
+        const q = items[i]?.q || ``;
+        const a = items[i]?.a || ``;
+        
+        md += `**${prefix === 'Q' ? 'Q' : 'Task '}${i + 1}${q ? `: ${q}` : ''}**\n> ${a}\n\n`;
       }
     }
     

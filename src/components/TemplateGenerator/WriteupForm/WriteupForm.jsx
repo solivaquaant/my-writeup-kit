@@ -174,7 +174,7 @@ export function WriteupForm({ data, onChange }) {
                  <input
                    type="number"
                    min="1"
-                   className="w-32"
+                   className="w-32 py-2 px-3 text-lg"
                    value={data.sections.taskAnswers.count || 1}
                    onChange={(e) => {
                      const val = Math.max(1, parseInt(e.target.value) || 1);
@@ -193,6 +193,35 @@ export function WriteupForm({ data, onChange }) {
                      onChange({ ...data, sections: newSections });
                    }}
                  />
+               </div>
+               
+               <div className="flex gap-4 mb-2">
+                 <label className="checkbox-label text-sm">
+                   <input
+                     type="radio"
+                     name="taskPrefix"
+                     checked={(data.sections.taskAnswers.prefix || 'Task') === 'Task'}
+                     onChange={() => {
+                       const newSections = { ...data.sections };
+                       newSections.taskAnswers.prefix = 'Task';
+                       onChange({ ...data, sections: newSections });
+                     }}
+                   />
+                   Task XX
+                 </label>
+                 <label className="checkbox-label text-sm">
+                   <input
+                     type="radio"
+                     name="taskPrefix"
+                     checked={data.sections.taskAnswers.prefix === 'Q'}
+                     onChange={() => {
+                       const newSections = { ...data.sections };
+                       newSections.taskAnswers.prefix = 'Q';
+                       onChange({ ...data, sections: newSections });
+                     }}
+                   />
+                   QXX
+                 </label>
                </div>
                
                {Array.from({ length: data.sections.taskAnswers.count || 1 }).map((_, i) => {
