@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { ClipboardCopy, CheckCircle2 } from 'lucide-react';
 import { WriteupForm } from './WriteupForm/WriteupForm';
 import { BlogForm } from './BlogForm/BlogForm';
 import './TemplateGenerator.css';
 
 export function TemplateGenerator() {
   const [type, setType] = useState('writeup');
-  const [copied, setCopied] = useState(false);
   const [markdownOutput, setMarkdownOutput] = useState('');
 
   // Write-up state
@@ -162,8 +160,6 @@ export function TemplateGenerator() {
 
   const handleCopy = () => {
     navigator.clipboard.writeText(markdownOutput);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -195,46 +191,18 @@ export function TemplateGenerator() {
         </div>
 
         {/* Right side: Markdown preview (Click to copy) */}
-        <div className="preview-section h-full relative group">
+        <div className="preview-section h-full">
           <div 
-            className={`
+            className="
               h-full w-full bg-[rgba(13,17,23,0.8)] border rounded-lg 
               font-mono text-sm text-[var(--accent-color-hover)] p-4 
               overflow-y-auto whitespace-pre-wrap cursor-pointer
               transition-all duration-300
-              ${copied ? 'border-[var(--success-color)] shadow-[0_0_15px_rgba(46,160,67,0.3)]' : 'border-[var(--border-color)] hover:border-[var(--accent-color)] hover:shadow-[0_0_15px_rgba(88,166,255,0.15)]'}
-            `}
+              border-[var(--border-color)] hover:border-[var(--accent-color)] hover:shadow-[0_0_15px_rgba(88,166,255,0.15)]
+            "
             onClick={handleCopy}
-            title="Click to copy markdown"
           >
             {markdownOutput || <span className="text-secondary opacity-50">Start typing to generate markdown...</span>}
-            
-            {/* Hover overlay hint */}
-            <div className={`
-              absolute inset-0 bg-[rgba(13,17,23,0.7)] backdrop-blur-[2px] 
-              flex items-center justify-center rounded-lg
-              opacity-0 group-hover:opacity-100 transition-opacity duration-300
-              ${copied ? 'opacity-100 bg-[rgba(13,17,23,0.85)] z-10' : ''}
-              pointer-events-none
-            `}>
-              <div className="flex flex-col items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                {copied ? (
-                  <>
-                    <CheckCircle2 size={48} color="var(--success-color)" className="animate-bounce" />
-                    <span className="text-[var(--success-color)] font-bold text-lg">
-                      Copied to Clipboard!
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <ClipboardCopy size={48} color="var(--accent-color)" />
-                    <span className="text-[var(--accent-color)] font-bold text-lg">
-                      Click to Copy
-                    </span>
-                  </>
-                )}
-              </div>
-            </div>
           </div>
         </div>
       </div>
