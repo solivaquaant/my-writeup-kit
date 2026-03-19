@@ -3,9 +3,18 @@ import { WriteupForm } from './WriteupForm/WriteupForm';
 import { BlogForm } from './BlogForm/BlogForm';
 import './TemplateGenerator.css';
 
-export function TemplateGenerator() {
-  const [type, setType] = useState('writeup');
+export function TemplateGenerator({ type, onTypeChange }) {
+  const [internalType, setInternalType] = useState('writeup');
   const [markdownOutput, setMarkdownOutput] = useState('');
+  const selectedType = type ?? internalType;
+
+  const setSelectedType = (nextType) => {
+    if (typeof onTypeChange === 'function') {
+      onTypeChange(nextType);
+      return;
+    }
+    setInternalType(nextType);
+  };
 
   // Write-up state
   const [writeupData, setWriteupData] = useState({
@@ -151,12 +160,12 @@ export function TemplateGenerator() {
 
   // Update markdown when data changes
   useEffect(() => {
-    if (type === 'writeup') {
+    if (selectedType === 'writeup') {
       setMarkdownOutput(generateWriteupMarkdown());
     } else {
       setMarkdownOutput(generateBlogMarkdown());
     }
-  }, [type, writeupData, blogData]);
+  }, [selectedType, writeupData, blogData]);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(markdownOutput);
@@ -164,26 +173,27 @@ export function TemplateGenerator() {
 
   return (
     <div className="generator-container animate-fade-in">
-      {/* Type selector */}
-      <div className="type-selector">
-        <button 
-          className={`type-btn ${type === 'writeup' ? 'active' : ''}`}
-          onClick={() => setType('writeup')}
-        >
-          Write-up
-        </button>
-        <button 
-          className={`type-btn ${type === 'blog' ? 'active' : ''}`}
-          onClick={() => setType('blog')}
-        >
-          Blog
-        </button>
-      </div>
+      {type === undefined && (
+        <div className="type-selector">
+          <button
+            className={`type-btn ${selectedType === 'writeup' ? 'active' : ''}`}
+            onClick={() => setSelectedType('writeup')}
+          >
+            Write-up
+          </button>
+          <button
+            className={`type-btn ${selectedType === 'blog' ? 'active' : ''}`}
+            onClick={() => setSelectedType('blog')}
+          >
+            Blog
+          </button>
+        </div>
+      )}
 
       <div className="form-split flex-1 min-h-0">
         {/* Left side: Form inputs */}
         <div className="h-full overflow-hidden">
-          {type === 'writeup' ? (
+          {selectedType === 'writeup' ? (
             <WriteupForm data={writeupData} onChange={setWriteupData} />
           ) : (
             <BlogForm data={blogData} onChange={setBlogData} />

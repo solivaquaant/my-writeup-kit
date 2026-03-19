@@ -152,7 +152,7 @@ export function WriteupForm({ data, onChange }) {
                value={data.sections.solution.content}
                onChange={(e) => handleSectionContentChange('solution', e.target.value)}
                placeholder="Solution content..."
-               rows={3}
+               rows={10}
                className="ml-6 mt-2"
              />
           )}
