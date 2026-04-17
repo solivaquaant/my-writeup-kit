@@ -1,7 +1,70 @@
 import React, { useState, useEffect } from 'react';
+import { Trash2 } from 'lucide-react';
 import { WriteupForm } from './WriteupForm/WriteupForm';
 import { BlogForm } from './BlogForm/BlogForm';
 import './TemplateGenerator.css';
+
+const STORAGE_KEYS = {
+  writeup: 'my-writeup-kit.writeup-data',
+  blog: 'my-writeup-kit.blog-data'
+};
+
+const createDefaultWriteupData = () => ({
+  tags: [],
+  title: '',
+  generalInfo: {
+    Description: '',
+    Difficulty: '',
+    Scenario: '',
+    Link: ''
+  },
+  sections: {
+    overview: {
+      enabled: false,
+      content: ''
+    },
+    solution: {
+      enabled: true,
+      content: ''
+    },
+    taskAnswers: {
+      enabled: false,
+      count: 1,
+      prefix: 'Task',
+      items: [{ q: '', a: '' }]
+    },
+    flag: {
+      enabled: true,
+      count: 1,
+      flag1: '',
+      flag2: ''
+    }
+  }
+});
+
+const createDefaultBlogData = () => ({
+  frontMatter: {
+    authors: 'tndt',
+    description: ''
+  },
+  tags: [],
+  title: '',
+  summary: '',
+  sections: []
+});
+
+const loadStoredData = (storageKey, fallbackFactory) => {
+  if (typeof window === 'undefined') return fallbackFactory();
+
+  const raw = window.localStorage.getItem(storageKey);
+  if (!raw) return fallbackFactory();
+
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return fallbackFactory();
+  }
+};
 
 export function TemplateGenerator({ type, onTypeChange }) {
   const [internalType, setInternalType] = useState('writeup');
@@ -17,50 +80,14 @@ export function TemplateGenerator({ type, onTypeChange }) {
   };
 
   // Write-up state
-  const [writeupData, setWriteupData] = useState({
-    tags: [],
-    title: '',
-    generalInfo: {
-      Description: '',
-      Difficulty: '',
-      Scenario: '',
-      Link: ''
-    },
-    sections: {
-      overview: { 
-        enabled: false, 
-        content: '' 
-      },
-      solution: { 
-        enabled: true, 
-        content: '' 
-      },
-      taskAnswers: { 
-        enabled: false, 
-        count: 1,
-        prefix: 'Task',
-        items: [{ q: '', a: '' }]
-      },
-      flag: { 
-        enabled: true, 
-        count: 1, 
-        flag1: '', 
-        flag2: '' 
-      }
-    }
-  });
+  const [writeupData, setWriteupData] = useState(() =>
+    loadStoredData(STORAGE_KEYS.writeup, createDefaultWriteupData)
+  );
 
   // Blog state
-  const [blogData, setBlogData] = useState({
-    frontMatter: {
-      authors: 'tndt',
-      description: ''
-    },
-    tags: [],
-    title: '',
-    summary: '',
-    sections: []
-  });
+  const [blogData, setBlogData] = useState(() =>
+    loadStoredData(STORAGE_KEYS.blog, createDefaultBlogData)
+  );
 
   // Markdown generation logic - writeup
   const generateWriteupMarkdown = () => {
@@ -167,8 +194,30 @@ export function TemplateGenerator({ type, onTypeChange }) {
     }
   }, [selectedType, writeupData, blogData]);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    window.localStorage.setItem(STORAGE_KEYS.writeup, JSON.stringify(writeupData));
+  }, [writeupData]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    window.localStorage.setItem(STORAGE_KEYS.blog, JSON.stringify(blogData));
+  }, [blogData]);
+
   const handleCopy = () => {
     navigator.clipboard.writeText(markdownOutput);
+  };
+
+  const handleClearStoredData = () => {
+    if (typeof window === 'undefined') return;
+
+    const shouldClear = window.confirm('Clear all saved write-up and blog data?');
+    if (!shouldClear) return;
+
+    window.localStorage.removeItem(STORAGE_KEYS.writeup);
+    window.localStorage.removeItem(STORAGE_KEYS.blog);
+    setWriteupData(createDefaultWriteupData());
+    setBlogData(createDefaultBlogData());
   };
 
   return (
@@ -189,6 +238,16 @@ export function TemplateGenerator({ type, onTypeChange }) {
           </button>
         </div>
       )}
+
+      <div className="generator-actions">
+        <button
+          type="button"
+          className="btn btn-secondary"
+          onClick={handleClearStoredData}
+        >
+          <Trash2 size={16} /> Clear saved data
+        </button>
+      </div>
 
       <div className="form-split flex-1 min-h-0">
         {/* Left side: Form inputs */}

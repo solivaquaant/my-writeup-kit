@@ -5,6 +5,16 @@
   height: 100%;
 }
 
+.generator-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: calc(var(--spacing-md) * -1);
+}
+
+.generator-actions .btn {
+  min-width: 180px;
+}
+
 .type-selector {
   display: flex;
   gap: var(--spacing-sm);
@@ -61,6 +71,17 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+}
+
+@media (max-width: 900px) {
+  .generator-actions {
+    justify-content: stretch;
+    margin-top: 0;
+  }
+
+  .generator-actions .btn {
+    width: 100%;
+  }
 }
 
 /* Form group utilities */
