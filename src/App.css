@@ -70,3 +70,18 @@
   min-height: 0;
   overflow: hidden;
 }
+
+@media (max-width: 900px) {
+  .app-container {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+    padding: 1rem 0.5rem;
+  }
+
+  .main-content {
+    height: auto;
+    overflow: visible;
+    flex: none;
+  }
+}

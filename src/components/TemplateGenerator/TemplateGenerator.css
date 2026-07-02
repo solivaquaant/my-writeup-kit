@@ -82,6 +82,23 @@
   .generator-actions .btn {
     width: 100%;
   }
+
+  .form-split {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+    height: auto;
+  }
+
+  .form-section {
+    padding-right: 0;
+    height: auto;
+    overflow-y: visible;
+  }
+
+  .preview-section {
+    height: auto;
+    min-height: 350px;
+  }
 }
 
 /* Form group utilities */
